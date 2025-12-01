@@ -1,297 +1,6 @@
-// "use client";
-
-// import { supabase } from "@/lib/supabase/client";
-// import { Button } from "@/components/ui/button";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuLabel,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
-// import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-// import {
-//   LayoutDashboard,
-//   LogOut,
-//   Menu,
-//   Settings,
-//   Shield,
-//   User,
-//   Users,
-//   ChevronDown,
-//   Home,
-//   Building2,
-//   Briefcase,
-//   FolderOpen,
-//   BookOpen,
-//   Mail,
-//   Phone,
-//   Target,
-//   Award,
-//   Code,
-//   Palette,
-//   TrendingUp,
-//   Megaphone,
-// } from "lucide-react";
-// import { useState } from "react";
-// import { Link, useNavigate, useLocation } from "react-router-dom";
-
-// export function Navbar({ user, profile }) {
-//   const navigate = useNavigate();
-//   const location = useLocation();
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   const handleLogout = async () => {
-//     await supabase.auth.signOut();
-//     navigate("/");
-//     window.location.reload();
-//   };
-
-//   const getInitials = (name) => {
-//     if (!name) return "?";
-//     return name
-//       .split(" ")
-//       .map((n) => n[0])
-//       .join("")
-//       .toUpperCase()
-//       .slice(0, 2);
-//   };
-
-//   const isAdmin = profile?.role === "admin";
-
-//   const publicNavItems = [
-//     { href: "/", label: "Home", icon: Home },
-//     {
-//       label: "About Us",
-//       icon: Building2,
-//       dropdown: [
-//         { href: "/about", label: "Our Company", icon: Building2 },
-//         { href: "/about/mission", label: "Mission & Vision", icon: Target },
-//         { href: "/about/team", label: "Our Team", icon: Users },
-//         { href: "/about/careers", label: "Careers", icon: Award },
-//       ],
-//     },
-//     {
-//       label: "Services",
-//       icon: Briefcase,
-//       dropdown: [
-//         { href: "/services/web-development", label: "Web Development", icon: Code },
-//         { href: "/services/ui-ux-design", label: "UI/UX Design", icon: Palette },
-//         { href: "/services/digital-marketing", label: "Digital Marketing", icon: TrendingUp },
-//         { href: "/services/branding", label: "Branding", icon: Megaphone },
-//       ],
-//     },
-//     { href: "/portfolio", label: "Portfolio", icon: FolderOpen },
-//     { href: "/blog", label: "Blog", icon: BookOpen },
-//     { href: "/contact", label: "Contact Us", icon: Mail },
-//   ];
-
-//   const userNavItems = [
-//     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-//     { href: "/profile", label: "Profile", icon: User },
-//     ...(isAdmin ? [{ href: "/admin", label: "User Management", icon: Users }] : []),
-//   ];
-
-//   const isActive = (href) => location.pathname === href;
-
-//   return (
-//     // <header className="sticky top-0 z-80 w-full border-b border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
-//     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-//       <div className="flex h-16 items-center justify-between px-2 w-full">
-//         {/* Logo */}
-//         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-3">
-//           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-md">
-//             <Shield className="h-6 w-6 text-primary-foreground" />
-//           </div>
-//           <span className="hidden text-xl font-bold tracking-tight sm:block left-0">
-//             User Management System
-//           </span>
-//         </Link>
-
-//         {/* Desktop Navigation */}
-//         <nav className="hidden lg:flex items-center gap-1">
-//           {publicNavItems.map((item) =>
-//             item.dropdown ? (
-//               <DropdownMenu key={item.label}>
-//                 <DropdownMenuTrigger asChild>
-//                   <Button
-//                     variant="ghost"
-//                     className="group flex items-center gap-2 rounded-lg px-4 py-6 text-base font-medium text-foreground/80 transition-all hover:text-foreground hover:bg-accent/50 data-[state=open]:bg-accent/80 data-[state=open]:text-foreground"
-//                   >
-//                     <item.icon className="h-4.5 w-4.5 transition-transform group-hover:scale-110" />
-//                     {item.label}
-//                     <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-//                   </Button>
-//                 </DropdownMenuTrigger>
-//                 <DropdownMenuContent
-//                   align="start"
-//                   className="w-64 rounded-xl border shadow-lg p-2 mt-2 bg-white/95 backdrop-blur-sm"
-//                 >
-//                   {item.dropdown.map((sub) => (
-//                     <DropdownMenuItem
-//                       key={sub.href}
-//                       asChild
-//                       className="rounded-lg cursor-pointer transition-colors hover:bg-accent/70 focus:bg-accent/80"
-//                     >
-//                       <Link
-//                         to={sub.href}
-//                         className="flex items-center gap-3 px-3 py-2.5 text-foreground/80 font-medium"
-//                       >
-//                         <sub.icon className="h-5 w-5 text-primary" />
-//                         <span>{sub.label}</span>
-//                       </Link>
-//                     </DropdownMenuItem>
-//                   ))}
-//                 </DropdownMenuContent>
-//               </DropdownMenu>
-//             ) : (
-//               <Link key={item.href} to={item.href}>
-//                 <Button
-//                   variant={isActive(item.href) ? "secondary" : "ghost"}
-//                   className={`rounded-lg px-4 py-6 text-base font-medium transition-all ${
-//                     isActive(item.href)
-//                       ? "bg-primary text-primary-foreground shadow-sm"
-//                       : "hover:bg-accent/60 hover:text-foreground"
-//                   }`}
-//                 >
-//                   <item.icon className="h-4.5 w-4.5 mr-2" />
-//                   {item.label}
-//                 </Button>
-//               </Link>
-//             )
-//           )}
-//         </nav>
-
-//         {/* Right Side */}
-//         {user ? (
-//           <div className="flex items-center gap-4">
-//             {/* Desktop User Links */}
-//             <div className="hidden md:flex items-center gap-2">
-//               {userNavItems.map((item) => (
-//                 <Link key={item.href} to={item.href}>
-//                   <Button
-//                     variant={isActive(item.href) ? "secondary" : "ghost"}
-//                     size="sm"
-//                     className="gap-2 font-medium"
-//                   >
-//                     <item.icon className="h-4 w-4" />
-//                     {item.label}
-//                   </Button>
-//                 </Link>
-//               ))}
-//             </div>
-
-//             {/* Phone Button */}
-//             <a href="tel:+919876543210" className="hidden lg:flex">
-//               <Button variant="outline" className="gap-2 font-medium border-primary/20">
-//                 <Phone className="h-4 w-4" />
-//                 +91 98765 43210
-//               </Button>
-//             </a>
-
-//             {/* User Avatar Dropdown */}
-//             <DropdownMenu>
-//               <DropdownMenuTrigger asChild>
-//                 <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 overflow-hidden ring-2 ring-transparent hover:ring-primary/20 transition-all">
-//                   <Avatar className="h-10 w-10">
-//                     <AvatarImage src={profile?.profile_image} alt={profile?.name} />
-//                     <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-//                       {getInitials(profile?.name || user.email)}
-//                     </AvatarFallback>
-//                   </Avatar>
-//                 </Button>
-//               </DropdownMenuTrigger>
-//               <DropdownMenuContent align="end" className="w-64 rounded-xl shadow-xl border p-3">
-//                 <DropdownMenuLabel className="font-normal">
-//                   <div className="flex flex-col space-y-2">
-//                     <p className="text-base font-semibold leading-none">
-//                       {profile?.name || "User"}
-//                     </p>
-//                     <p className="text-sm text-muted-foreground">{user.email}</p>
-//                   </div>
-//                 </DropdownMenuLabel>
-//                 <DropdownMenuSeparator />
-//                 <DropdownMenuItem asChild>
-//                   <Link to="/profile" className="flex items-center gap-3 py-2.5 cursor-pointer">
-//                     <Settings className="h-4.5 w-4.5" />
-//                     <span>Settings</span>
-//                   </Link>
-//                 </DropdownMenuItem>
-//                 {isAdmin && (
-//                   <DropdownMenuItem asChild>
-//                     <Link to="/admin" className="flex items-center gap-3 py-2.5 cursor-pointer">
-//                       <Users className="h-4.5 w-4.5" />
-//                       <span>Admin Panel</span>
-//                     </Link>
-//                   </DropdownMenuItem>
-//                 )}
-//                 <DropdownMenuSeparator />
-//                 <DropdownMenuItem
-//                   onClick={handleLogout}
-//                   className="text-destructive focus:text-destructive cursor-pointer py-2.5"
-//                 >
-//                   <LogOut className="mr-3 h-4.5 w-4.5" />
-//                   Sign Out
-//                 </DropdownMenuItem>
-//               </DropdownMenuContent>
-//             </DropdownMenu>
-
-//             {/* Mobile Menu Trigger */}
-//             <Sheet open={isOpen} onOpenChange={setIsOpen}>
-//               <SheetTrigger asChild>
-//                 <Button variant="ghost" size="icon" className="lg:hidden">
-//                   <Menu className="h-6 w-6" />
-//                 </Button>
-//               </SheetTrigger>
-//               <SheetContent side="left" className="w-80">
-//                 <div className="flex flex-col gap-6 mt-8">
-//                   <div className="space-y-4">
-//                     {publicNavItems.map((item) => (
-//                       <div key={item.label}>
-//                         <Link to={item.href || "#"} className="text-lg font-medium">
-//                           {item.label}
-//                         </Link>
-//                       </div>
-//                     ))}
-//                   </div>
-//                 </div>
-//               </SheetContent>
-//             </Sheet>
-//           </div>
-//         ) : (
-//           <div className="flex items-center gap-4">
-//             <a href="tel:+919876543210" className="hidden md:block">
-//               <Button variant="outline" className="gap-2">
-//                 <Phone className="h-4 w-4" />
-//                 +91 98765 43210
-//               </Button>
-//             </a>
-//             <Link to="/auth/login" className="hidden lg:block">
-//               <Button variant="ghost" className="font-medium">Sign In</Button>
-//             </Link>
-//             <Link to="/auth/sign-up" className="hidden lg:block">
-//               <Button className="font-medium">Get Started</Button>
-//             </Link>
-//             <Button
-//               variant="ghost"
-//               size="icon"
-//               className="lg:hidden"
-//               onClick={() => setIsOpen(true)}
-//             >
-//               <Menu className="h-6 w-6" />
-//             </Button>
-//           </div>
-//         )}
-//       </div>
-//     </header>
-//   );
-// }
-
 "use client";
 
-import { supabase } from "@/lib/supabase/client";
+import { supabase, forceClearAuth } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -331,26 +40,23 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
 
 export function Navbar() {
-  const { user, profile } = useUser();
+  const { user, profile, forceSignOut } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
+    console.log('🚪 SIGN-OUT: Using context signout function...');
+
     try {
-      console.log('Attempting to sign out...')
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Sign out error:', error);
-        alert('Failed to sign out. Please try again.');
-        return;
-      }
-      console.log('Sign out successful - auth state should change automatically');
-      // The auth state change listener in UserContext will handle clearing the user state
-      // No need to manually redirect - the listener will handle it
-    } catch (err) {
-      console.error('Unexpected error during sign out:', err);
-      alert('An unexpected error occurred during sign out.');
+      // Use the context's forceSignOut function which handles everything
+      forceSignOut();
+      console.log('✅ Sign-out completed via context');
+
+    } catch (error) {
+      console.error('❌ Sign-out error:', error);
+      // Fallback: force navigation
+      window.location.href = '/';
     }
   };
 
@@ -472,8 +178,7 @@ export function Navbar() {
         {/* Right Side */}
         {user ? (
           <div className="flex items-center gap-4">
-
-
+            
             {/* Phone Button */}
             <a href="tel:+919876543210" className="hidden 2xl:flex">
               <Button className="gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-medium shadow-lg">
@@ -487,11 +192,11 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-11 w-11 rounded-full overflow-hidden ring-4 ring-white/10 hover:ring-violet-500/40 transition-all duration-300 shadow-xl"
+                  className="relative h-11 w-11 rounded-full overflow-hidden bg-gradient-to-br from-violet-600 to-indigo-600 ring-4 ring-white/10 hover:ring-violet-500/40 transition-all duration-300 shadow-xl"
                 >
                   <Avatar className="h-full w-full">
                     <AvatarImage src={profile?.profile_image} alt={profile?.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-violet-600 to-indigo-600 text-white font-bold text-lg">
+                    <AvatarFallback className="text-white font-bold text-lg">
                       {getInitials(profile?.name || user.email)}
                     </AvatarFallback>
                   </Avatar>
@@ -563,7 +268,7 @@ export function Navbar() {
             </Sheet>
           </div>
         ) : (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 ml-5">
             <a href="tel:+919876543210" className="hidden md:block">
               <Button className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-medium shadow-xl">
                 <Phone className="h-4 w-4 mr-2" />

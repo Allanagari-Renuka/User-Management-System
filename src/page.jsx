@@ -112,26 +112,17 @@ export default function HomePage() {
             <p className="text-xl text-white/70 mb-12">
               Join thousands of developers building secure apps with our user management solution.
             </p>
-          {/* <Button 
-            asChild 
-            size="lg" 
-            className="px-10 py-6 rounded-2xl font-semibold shadow-xl bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-black bg-white transition-all duration-300"
-          >
-            <Link to="/auth/sign-up">Start Building Today</Link>
-          </Button> */}
           <Button
             asChild
             size="lg"
             className="
-    relative overflow-hidden
-    px-12 py-6 rounded-3xl font-semibold shadow-[0_10px_30px_rgba(128,0,255,0.3)]
-    bg-gradient-to-r from-purple-500 to-indigo-600
-    text-white
-    transition-all duration-300
-    hover:scale-[1.05] active:scale-[0.97]
-    hover:shadow-[0_12px_40px_rgba(128,0,255,0.5)]
-  "
-          >
+            relative overflow-hidden
+            px-12 py-6 rounded-3xl font-semibold shadow-[0_10px_30px_rgba(128,0,255,0.3)]
+            bg-gradient-to-r from-purple-500 to-indigo-600
+           text-white
+            transition-all duration-300
+            hover:scale-[1.05] active:scale-[0.97]
+            hover:shadow-[0_12px_40px_rgba(128,0,255,0.5)]">
             <Link to="/auth/sign-up" className="relative z-10 select-none">
               Start Building Today
             </Link>

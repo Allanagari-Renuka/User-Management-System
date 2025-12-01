@@ -18,7 +18,7 @@ export default function DashboardPage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!contextLoading && !user) {
-      console.log('⚠️ No authenticated user - redirecting to login')
+      console.log('No authenticated user - redirecting to login')
       navigate("/auth/login")
     }
   }, [user, contextLoading, navigate])

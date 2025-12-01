@@ -1,14 +1,14 @@
 import { createServerClient } from "@supabase/ssr"
-import { NextResponse, type NextRequest } from "next/server"
+import { NextResponse,  NextResponse } from "next/server"
 
-export async function updateSession(request: NextRequest) {
+export async function updateSession(request) {
   let supabaseResponse = NextResponse.next({
     request,
   })
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -19,10 +19,12 @@ export async function updateSession(request: NextRequest) {
           supabaseResponse = NextResponse.next({
             request,
           })
-          cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
         },
       },
-    },
+    }
   )
 
   const {
@@ -31,7 +33,9 @@ export async function updateSession(request: NextRequest) {
 
   // Protected routes - redirect to login if not authenticated
   const protectedRoutes = ["/dashboard", "/profile", "/admin"]
-  const isProtectedRoute = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route)
+  )
 
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone()
@@ -41,7 +45,9 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect logged-in users away from auth pages
   const authRoutes = ["/auth/login", "/auth/sign-up"]
-  const isAuthRoute = authRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+  const isAuthRoute = authRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route)
+  )
 
   if (isAuthRoute && user) {
     const url = request.nextUrl.clone()

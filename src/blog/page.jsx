@@ -1,255 +1,20 @@
-// import React from 'react'
-// import { Link } from 'react-router-dom'
-// import { Button } from "@/components/ui/button"
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-// import { Badge } from "@/components/ui/badge"
-// import { ArrowRight, Calendar, Clock, User, BookOpen } from "lucide-react"
-
-// export default function BlogPage() {
-//   const blogPosts = [
-//     {
-//       title: "The Future of Web Development: Trends to Watch in 2024",
-//       excerpt: "Explore the latest trends shaping the web development landscape, from AI integration to serverless architecture.",
-//       author: "John Smith",
-//       date: "2024-01-15",
-//       readTime: "5 min read",
-//       category: "Web Development",
-//       image: "/api/placeholder/600/400",
-//       slug: "future-web-development-2024"
-//     },
-//     {
-//       title: "Building Scalable React Applications: Best Practices",
-//       excerpt: "Learn how to structure your React apps for scalability and maintainability with proven patterns and techniques.",
-//       author: "Sarah Johnson",
-//       date: "2024-01-10",
-//       readTime: "8 min read",
-//       category: "React",
-//       image: "/api/placeholder/600/400",
-//       slug: "scalable-react-applications"
-//     },
-//     {
-//       title: "The Complete Guide to User Authentication",
-//       excerpt: "Implement secure authentication systems with modern best practices and industry standards.",
-//       author: "Mike Chen",
-//       date: "2024-01-05",
-//       readTime: "12 min read",
-//       category: "Security",
-//       image: "/api/placeholder/600/400",
-//       slug: "user-authentication-guide"
-//     },
-//     {
-//       title: "Optimizing Database Performance: Tips and Tricks",
-//       excerpt: "Discover techniques to improve your database performance and reduce query times significantly.",
-//       author: "Emma Davis",
-//       date: "2023-12-28",
-//       readTime: "6 min read",
-//       category: "Database",
-//       image: "/api/placeholder/600/400",
-//       slug: "database-performance-optimization"
-//     },
-//     {
-//       title: "Mastering CSS Grid and Flexbox",
-//       excerpt: "A comprehensive guide to modern CSS layout techniques that will revolutionize your design workflow.",
-//       author: "Alex Rodriguez",
-//       date: "2023-12-20",
-//       readTime: "10 min read",
-//       category: "CSS",
-//       image: "/api/placeholder/600/400",
-//       slug: "css-grid-flexbox-mastery"
-//     },
-//     {
-//       title: "Introduction to TypeScript: Why You Should Use It",
-//       excerpt: "Explore the benefits of TypeScript and how it can improve your JavaScript development experience.",
-//       author: "Lisa Wang",
-//       date: "2023-12-15",
-//       readTime: "7 min read",
-//       category: "TypeScript",
-//       image: "/api/placeholder/600/400",
-//       slug: "typescript-introduction"
-//     }
-//   ]
-
-//   const categories = [
-//     { name: "All", count: 24 },
-//     { name: "Web Development", count: 8 },
-//     { name: "React", count: 6 },
-//     { name: "JavaScript", count: 4 },
-//     { name: "CSS", count: 3 },
-//     { name: "TypeScript", count: 2 },
-//     { name: "Security", count: 1 }
-//   ]
-
-//   return (
-//     <div className="w-full">
-//       {/* Hero Section */}
-//       <section className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950 dark:to-indigo-900 py-20">
-//         <div className="container mx-auto px-4">
-//           <div className="max-w-4xl mx-auto text-center">
-//             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-//               Our Blog
-//             </h1>
-//             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-//               Insights, tutorials, and industry trends from our team of experts.
-//             </p>
-//             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-//               <Link to="/contact">
-//                 <Button size="lg" className="gap-2">
-//                   Get in Touch
-//                   <ArrowRight className="h-4 w-4" />
-//                 </Button>
-//               </Link>
-//               <Link to="/services">
-//                 <Button variant="outline" size="lg">
-//                   Our Services
-//                 </Button>
-//               </Link>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Categories */}
-//       <section className="py-12 bg-gray-50 dark:bg-gray-900">
-//         <div className="container mx-auto px-4">
-//           <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-//             {categories.map((category, index) => (
-//               <Button key={index} variant="outline" className="gap-2">
-//                 {category.name}
-//                 <Badge variant="secondary">{category.count}</Badge>
-//               </Button>
-//             ))}
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Blog Posts Grid */}
-//       <section className="py-20">
-//         <div className="container mx-auto px-4">
-//           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-//             {blogPosts.map((post, index) => (
-//               <Card key={index} className="group hover:shadow-lg transition-shadow overflow-hidden">
-//                 <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative overflow-hidden">
-//                   <img
-//                     src={post.image}
-//                     alt={post.title}
-//                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-//                   />
-//                   <div className="absolute top-4 left-4">
-//                     <Badge variant="secondary" className="bg-white/90 text-gray-900">
-//                       {post.category}
-//                     </Badge>
-//                   </div>
-//                 </div>
-//                 <CardHeader>
-//                   <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-2">
-//                     <div className="flex items-center gap-1">
-//                       <User className="h-4 w-4" />
-//                       {post.author}
-//                     </div>
-//                     <div className="flex items-center gap-1">
-//                       <Calendar className="h-4 w-4" />
-//                       {new Date(post.date).toLocaleDateString()}
-//                     </div>
-//                     <div className="flex items-center gap-1">
-//                       <Clock className="h-4 w-4" />
-//                       {post.readTime}
-//                     </div>
-//                   </div>
-//                   <CardTitle className="text-xl group-hover:text-blue-600 transition-colors line-clamp-2">
-//                     {post.title}
-//                   </CardTitle>
-//                   <CardDescription className="line-clamp-3">{post.excerpt}</CardDescription>
-//                 </CardHeader>
-//                 <CardContent>
-//                   <Button variant="outline" size="sm" className="w-full gap-2">
-//                     Read More
-//                     <BookOpen className="h-3 w-3" />
-//                   </Button>
-//                 </CardContent>
-//               </Card>
-//             ))}
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Newsletter Signup */}
-//       <section className="bg-gray-50 dark:bg-gray-900 py-20">
-//         <div className="container mx-auto px-4">
-//           <div className="max-w-4xl mx-auto text-center">
-//             <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
-//             <p className="text-gray-600 dark:text-gray-300 mb-8">
-//               Subscribe to our newsletter for the latest insights and tutorials
-//             </p>
-//             <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-//               <input
-//                 type="email"
-//                 placeholder="Enter your email"
-//                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-//               />
-//               <Button>Subscribe</Button>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Stats */}
-//       <section className="py-20">
-//         <div className="container mx-auto px-4">
-//           <div className="max-w-4xl mx-auto text-center mb-12">
-//             <h2 className="text-3xl font-bold mb-4">Our Blog in Numbers</h2>
-//             <p className="text-gray-600 dark:text-gray-300">
-//               The impact of our content and community
-//             </p>
-//           </div>
-//           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-//             <Card>
-//               <CardContent className="pt-6 text-center">
-//                 <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
-//                 <div className="text-gray-600 dark:text-gray-300">Articles Published</div>
-//               </CardContent>
-//             </Card>
-//             <Card>
-//               <CardContent className="pt-6 text-center">
-//                 <div className="text-3xl font-bold text-green-600 mb-2">50K+</div>
-//                 <div className="text-gray-600 dark:text-gray-300">Monthly Readers</div>
-//               </CardContent>
-//             </Card>
-//             <Card>
-//               <CardContent className="pt-6 text-center">
-//                 <div className="text-3xl font-bold text-purple-600 mb-2">98%</div>
-//                 <div className="text-gray-600 dark:text-gray-300">Reader Satisfaction</div>
-//               </CardContent>
-//             </Card>
-//             <Card>
-//               <CardContent className="pt-6 text-center">
-//                 <div className="text-3xl font-bold text-orange-600 mb-2">24/7</div>
-//                 <div className="text-gray-600 dark:text-gray-300">Content Updates</div>
-//               </CardContent>
-//             </Card>
-//           </div>
-//         </div>
-//       </section>
-//     </div>
-//   )
-// }
-
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Calendar, Clock, User, BookOpen, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 
-// Real Unsplash images (beautiful & high-quality)
+// Real Unsplash images 
 const blogPosts = [
   {
     title: "The Future of Web Development: Trends to Watch in 2024",
@@ -324,6 +89,35 @@ const categories = [
 ]
 
 export default function BlogPage() {
+  const [email, setEmail] = useState('')
+  const [isSubscribed, setIsSubscribed] = useState(false)
+
+  const handleSubscribe = () => {
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (!email) {
+      alert('Please enter an email address')
+      return
+    }
+
+    if (!emailRegex.test(email)) {
+      alert('Please enter a correct email format (e.g., user@gmail.com)')
+      return
+    }
+
+    // Simulate subscription (you can replace this with actual API call)
+    console.log('✅ User has subscribed successfully!')
+    console.log('📧 Email:', email)
+    console.log('📰 Newsletter subscription completed')
+
+    alert('Thank you for subscribing! You will receive our latest insights and tutorials.')
+
+    // Reset form
+    setEmail('')
+    setIsSubscribed(true)
+  }
+
   return (
     <div className="w-full bg-black text-white overflow-x-hidden">
       {/* Hero - Full Width */}
@@ -455,9 +249,14 @@ export default function BlogPage() {
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 px-8 py-6 bg-white/10 backdrop-blur border border-white/20 rounded-full text-white placeholder-white/60 text-lg focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
               />
-              <Button className="px-12 py-6 bg-white text-black hover:bg-white/90 rounded-full text-xl font-bold shadow-2xl mt-5">
+              <Button
+                onClick={handleSubscribe}
+                className="px-12 py-6 bg-white text-black hover:bg-white/90 rounded-full text-xl font-bold shadow-2xl mt-5"
+              >
                 Subscribe Now
               </Button>
             </div>

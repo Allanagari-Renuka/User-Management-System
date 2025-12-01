@@ -16,7 +16,7 @@
 
     /* TS Project Reference Requirement */
     "composite": true,
-    "noEmit": true,   // ✔ Fix for allowImportingTsExtensions
+    "noEmit": true,   
 
     /* Linting */
     "strict": true,

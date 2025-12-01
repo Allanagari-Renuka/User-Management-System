@@ -10,18 +10,12 @@ export default function DebugPage() {
   useEffect(() => {
     const runDebug = async () => {
       const info = {}
-
-      // Check environment variables
       info.env = {
         VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
         VITE_SUPABASE_ANON_KEY: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
         VITE_SUPABASE_ANON_KEY_LENGTH: import.meta.env.VITE_SUPABASE_ANON_KEY?.length
       }
-
-      // Check Supabase client
       info.supabaseClient = !!supabase
-
-      // Try to get session
       try {
         const { data, error } = await supabase.auth.getSession()
         info.session = {

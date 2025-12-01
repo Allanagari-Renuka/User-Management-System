@@ -102,10 +102,11 @@ export default function WebDevelopmentPage() {
       {/* Final CTA */}
       <section className="py-40 px-6 bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-600">
         <motion.div className="text-center max-w-5xl mx-auto" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
-          <h2 className="text-7xl md:text-9xl font-black mb-10">
+          <h2 className="text-7xl md:text-9xl font-black mb-10 text-white">
             Ready to<br />
-            <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Dominate Online?</span>
+            <span className="text-white">Dominate Online?</span>
           </h2>
+
           <Link to="/contact">
             <Button className="bg-white text-black text-3xl font-bold px-32 py-16 rounded-full shadow-2xl hover:shadow-cyan-500/60 transform hover:scale-110 transition-all">
               Build Something Unstoppable

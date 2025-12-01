@@ -1,136 +1,155 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import type { Profile } from "@/types/database"
-import { UsersTable } from "./users-table"
-import { UserModal } from "./user-modal"
-import { DeleteConfirmModal } from "./delete-confirm-modal"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Users } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { UsersTable } from "./users-table";
+import { UserModal } from "./user-modal";
+import { DeleteConfirmModal } from "./delete-confirm-modal";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, Users } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
-type AdminDashboardProps = {
-  users: Profile[]
-  currentUserId: string
-}
-
-export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDashboardProps) {
-  const [users, setUsers] = useState(initialUsers)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [roleFilter, setRoleFilter] = useState<string>("all")
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<Profile | null>(null)
-  const [userToDelete, setUserToDelete] = useState<Profile | null>(null)
-  const router = useRouter()
+export function AdminDashboard({ users: initialUsers, currentUserId }) {
+  const [users, setUsers] = useState(initialUsers || []);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const router = useRouter();
 
   const filteredUsers = users.filter((user) => {
+    const searchLower = searchQuery.toLowerCase();
     const matchesSearch =
-      user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.phone?.includes(searchQuery)
-    const matchesRole = roleFilter === "all" || user.role === roleFilter
-    return matchesSearch && matchesRole
-  })
+      (user.name || "").toLowerCase().includes(searchLower) ||
+      (user.email || "").toLowerCase().includes(searchLower) ||
+      (user.phone || "").includes(searchQuery);
 
-  const handleEdit = (user: Profile) => {
-    setSelectedUser(user)
-    setIsModalOpen(true)
-  }
+    const matchesRole = roleFilter === "all" || user.role === roleFilter;
+    return matchesSearch && matchesRole;
+  });
 
-  const handleDelete = (user: Profile) => {
-    setUserToDelete(user)
-    setIsDeleteModalOpen(true)
-  }
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (user) => {
+    setUserToDelete(user);
+    setIsDeleteModalOpen(true);
+  };
 
   const handleConfirmDelete = async () => {
-    if (!userToDelete) return
+    if (!userToDelete) return;
 
-    const supabase = createClient()
-    const { error } = await supabase.from("profiles").delete().eq("id", userToDelete.id)
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("id", userToDelete.id);
 
     if (!error) {
-      setUsers(users.filter((u) => u.id !== userToDelete.id))
+      setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
+    } else {
+      console.error("Delete failed:", error);
+      alert("Failed to delete user.");
     }
-    setIsDeleteModalOpen(false)
-    setUserToDelete(null)
-  }
 
-  const handleSave = async (userData: Partial<Profile>) => {
-    const supabase = createClient()
+    setIsDeleteModalOpen(false);
+    setUserToDelete(null);
+  };
+
+  const handleSave = async (userData) => {
+    const supabase = createClient();
 
     if (selectedUser) {
-      // Update existing user
       const { data, error } = await supabase
         .from("profiles")
         .update(userData)
         .eq("id", selectedUser.id)
         .select()
-        .single()
+        .single();
 
-      if (!error && data) {
-        setUsers(users.map((u) => (u.id === selectedUser.id ? data : u)))
+      if (error) {
+        console.error("Update failed:", error);
+        alert("Failed to update user.");
+        return;
+      }
+
+      if (data) {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === selectedUser.id ? data : u))
+        );
       }
     }
 
-    setIsModalOpen(false)
-    setSelectedUser(null)
-    router.refresh()
-  }
+    setIsModalOpen(false);
+    setSelectedUser(null);
+    router.refresh();
+  };
 
-  const totalUsers = users.length
-  const adminCount = users.filter((u) => u.role === "admin").length
-  const userCount = users.filter((u) => u.role === "user").length
+  const totalUsers = users.length;
+  const adminCount = users.filter((u) => u.role === "admin").length;
+  const userCount = users.filter((u) => u.role === "user").length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground mt-1">Manage all users in the system</p>
-        </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
+        <p className="text-muted-foreground mt-1">
+          Manage all users in the system
+        </p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Users className="h-5 w-5 text-primary" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-card border rounded-xl p-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary/10 rounded-lg">
+              <Users className="h-6 w-6 text-primary" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total Users</p>
-              <p className="text-2xl font-bold">{totalUsers}</p>
+              <p className="text-3xl font-bold">{totalUsers}</p>
             </div>
           </div>
         </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-500/10 rounded-lg">
-              <Users className="h-5 w-5 text-amber-500" />
+
+        <div className="bg-card border rounded-xl p-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-amber-500/10 rounded-lg">
+              <Users className="h-6 w-6 text-amber-500" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Admins</p>
-              <p className="text-2xl font-bold">{adminCount}</p>
+              <p className="text-3xl font-bold">{adminCount}</p>
             </div>
           </div>
         </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-lg">
-              <Users className="h-5 w-5 text-emerald-500" />
+
+        <div className="bg-card border rounded-xl p-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-emerald-500/10 rounded-lg">
+              <Users className="h-6 w-6 text-emerald-500" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Regular Users</p>
-              <p className="text-2xl font-bold">{userCount}</p>
+              <p className="text-3xl font-bold">{userCount}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -138,11 +157,12 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
             placeholder="Search by name, email, or phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-10 bg-background"
           />
         </div>
+
         <Select value={roleFilter} onValueChange={setRoleFilter}>
-          <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="Filter by role" />
           </SelectTrigger>
           <SelectContent>
@@ -156,27 +176,26 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
       {/* Users Table */}
       <UsersTable users={filteredUsers} currentUserId={currentUserId} onEdit={handleEdit} onDelete={handleDelete} />
 
-      {/* Edit Modal */}
+      {/* Modals */}
       <UserModal
         isOpen={isModalOpen}
         onClose={() => {
-          setIsModalOpen(false)
-          setSelectedUser(null)
+          setIsModalOpen(false);
+          setSelectedUser(null);
         }}
         user={selectedUser}
         onSave={handleSave}
       />
 
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false)
-          setUserToDelete(null)
+          setIsDeleteModalOpen(false);
+          setUserToDelete(null);
         }}
         onConfirm={handleConfirmDelete}
         userName={userToDelete?.name || userToDelete?.email || "this user"}
       />
     </div>
-  )
+  );
 }

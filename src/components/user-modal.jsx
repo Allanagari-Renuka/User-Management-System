@@ -1,24 +1,20 @@
-"use client"
+"use client";
 
-import type React from "react"
+import { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 
-import { useEffect, useState } from "react"
-import type { Profile } from "@/types/database"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Loader2 } from "lucide-react"
-
-type UserModalProps = {
-  isOpen: boolean
-  onClose: () => void
-  user: Profile | null
-  onSave: (userData: Partial<Profile>) => Promise<void>
-}
-
-export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
+export function UserModal({ isOpen, onClose, user, onSave }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -28,11 +24,13 @@ export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
     state: "",
     country: "",
     pincode: "",
-    role: "user" as "admin" | "user",
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
+    role: "user", // default role
+  });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  // Reset form when modal opens or user changes
   useEffect(() => {
     if (user) {
       setFormData({
@@ -44,9 +42,10 @@ export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
         state: user.state || "",
         country: user.country || "",
         pincode: user.pincode || "",
-        role: user.role,
-      })
+        role: user.role || "user",
+      });
     } else {
+      // Adding new user — reset form
       setFormData({
         name: "",
         email: "",
@@ -57,48 +56,61 @@ export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
         country: "",
         pincode: "",
         role: "user",
-      })
+      });
     }
-    setErrors({})
-  }, [user, isOpen])
+    setErrors({}); // Clear errors
+  }, [user, isOpen]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-    if (errors[e.target.name]) {
-      setErrors((prev) => ({ ...prev, [e.target.name]: "" }))
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-  }
+  };
+
+  const handleRoleChange = (value) => {
+    setFormData((prev) => ({ ...prev, role: value }));
+  };
 
   const validate = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required"
+      newErrors.name = "Name is required";
     }
+
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format"
-    }
-    if (formData.phone && !/^\+?[\d\s-]{10,}$/.test(formData.phone)) {
-      newErrors.phone = "Invalid phone number"
+      newErrors.email = "Please enter a valid email";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    if (formData.phone && !/^\+?[\d\s\-\(\)]{10,}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number is invalid";
+    }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validate()) return
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    setIsLoading(true)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    setIsLoading(true);
     try {
-      await onSave(formData)
+      await onSave(formData);
+      // onClose() is usually handled in parent after success
+    } catch (error) {
+      console.error("Save failed:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -106,13 +118,22 @@ export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
         <DialogHeader>
           <DialogTitle>{user ? "Edit User" : "Add New User"}</DialogTitle>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Basic Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name *</Label>
-              <Input id="name" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" />
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+              />
               {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email *</Label>
               <Input
@@ -122,29 +143,28 @@ export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="john@example.com"
-                disabled={!!user}
+                disabled={!!user} // Email can't be changed after creation
               />
               {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">Phone Number</Label>
               <Input
                 id="phone"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="+1 234 567 8900"
+                placeholder="+91 98765 43210"
               />
               {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="role">Role *</Label>
-              <Select
-                value={formData.role}
-                onValueChange={(value: "admin" | "user") => setFormData((prev) => ({ ...prev, role: value }))}
-              >
+              <Select value={formData.role} onValueChange={handleRoleChange}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="user">User</SelectItem>
@@ -154,8 +174,9 @@ export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
             </div>
           </div>
 
+          {/* Address */}
           <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">Street Address</Label>
             <Input
               id="address"
               name="address"
@@ -165,26 +186,54 @@ export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="city">City</Label>
-              <Input id="city" name="city" value={formData.city} onChange={handleChange} placeholder="New York" />
+              <Input
+                id="city"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                placeholder="Mumbai"
+              />
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="state">State</Label>
-              <Input id="state" name="state" value={formData.state} onChange={handleChange} placeholder="NY" />
+              <Input
+                id="state"
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                placeholder="Maharashtra"
+              />
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="country">Country</Label>
-              <Input id="country" name="country" value={formData.country} onChange={handleChange} placeholder="USA" />
+              <Input
+                id="country"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                placeholder="India"
+              />
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="pincode">Pincode</Label>
-              <Input id="pincode" name="pincode" value={formData.pincode} onChange={handleChange} placeholder="10001" />
+              <Label htmlFor="pincode">Pincode / ZIP</Label>
+              <Input
+                id="pincode"
+                name="pincode"
+                value={formData.pincode}
+                onChange={handleChange}
+                placeholder="400001"
+              />
             </div>
           </div>
 
-          <div className="flex justify-end gap-3">
+          {/* Buttons */}
+          <div className="flex justify-end gap-4 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
@@ -202,5 +251,5 @@ export function UserModal({ isOpen, onClose, user, onSave }: UserModalProps) {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

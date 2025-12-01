@@ -10,8 +10,6 @@ if (!supabaseKey) {
 
 console.log('Supabase URL:', supabaseUrl)
 console.log('Supabase Key exists:', !!supabaseKey)
-
-// Create a singleton instance to avoid multiple GoTrueClient instances
 let supabaseInstance = null
 
 export const supabase = (() => {
@@ -25,12 +23,11 @@ export const supabase = (() => {
         flowType: 'pkce',
         storage: window.localStorage,
         storageKey: 'supabase.auth.token',
-        debug: false // Disable debug logging
+        debug: false 
       },
       global: {
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`
+          'apikey': supabaseKey
         }
       }
     })
@@ -38,6 +35,32 @@ export const supabase = (() => {
   }
   return supabaseInstance
 })()
+
+export const forceClearAuth = () => {
+  console.log('FORCE CLEARING ALL AUTH DATA...')
+
+  // Clear all possible storage locations
+  try {
+    localStorage.clear()
+    sessionStorage.clear()
+
+    // Clear cookies
+    document.cookie.split(";").forEach(c => {
+      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+
+    // Clear any Supabase-specific keys
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('supabase.') || key.includes('auth')) {
+        localStorage.removeItem(key)
+      }
+    })
+
+    console.log('All auth data cleared')
+  } catch (error) {
+    console.error('Error clearing auth data:', error)
+  }
+}
 
 export const createClient = () => {
   console.log('Warning: createClient() called - consider using the singleton supabase export instead')

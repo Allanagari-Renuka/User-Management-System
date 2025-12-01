@@ -93,7 +93,7 @@ export default function ContactPage() {
       action: "#",
     },
     {
-      icon: MapPin,   // ← Fixed: was "Pin"
+      icon: MapPin,  
       title: "Visit Us",
       description: "Schedule a meeting at our headquarters",
       contact: "123 Tech Street, San Francisco, CA",
@@ -288,9 +288,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
-      {/* Business Hours, FAQ, and CTA sections remain exactly the same as before – omitted here for brevity, but they are included in the full code below */}
-      {/* (Full code with all sections is provided at the end of this message) */}
 
       {/* Final CTA */}
       <section className="py-32 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 relative overflow-hidden">

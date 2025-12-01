@@ -1,65 +1,76 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import type { Profile } from "@/types/database"
-import { UsersTable } from "./users-table"
-import { UserModal } from "./user-modal"
-import { DeleteConfirmModal } from "./delete-confirm-modal"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Users } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { UsersTable } from "./users-table";
+import { UserModal } from "./user-modal";
+import { DeleteConfirmModal } from "./delete-confirm-modal";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, Users } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
-type AdminDashboardProps = {
-  users: Profile[]
-  currentUserId: string
-}
+export function AdminDashboard({ users: initialUsers, currentUserId }) {
+  const [users, setUsers] = useState(initialUsers);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const router = useRouter();
 
-export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDashboardProps) {
-  const [users, setUsers] = useState(initialUsers)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [roleFilter, setRoleFilter] = useState<string>("all")
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<Profile | null>(null)
-  const [userToDelete, setUserToDelete] = useState<Profile | null>(null)
-  const router = useRouter()
-
+  // Filter users based on search and role
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
-      user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.phone?.includes(searchQuery)
-    const matchesRole = roleFilter === "all" || user.role === roleFilter
-    return matchesSearch && matchesRole
-  })
+      (user.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (user.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (user.phone || "").includes(searchQuery);
 
-  const handleEdit = (user: Profile) => {
-    setSelectedUser(user)
-    setIsModalOpen(true)
-  }
+    const matchesRole = roleFilter === "all" || user.role === roleFilter;
 
-  const handleDelete = (user: Profile) => {
-    setUserToDelete(user)
-    setIsDeleteModalOpen(true)
-  }
+    return matchesSearch && matchesRole;
+  });
+
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (user) => {
+    setUserToDelete(user);
+    setIsDeleteModalOpen(true);
+  };
 
   const handleConfirmDelete = async () => {
-    if (!userToDelete) return
+    if (!userToDelete) return;
 
-    const supabase = createClient()
-    const { error } = await supabase.from("profiles").delete().eq("id", userToDelete.id)
+    const supabase = createClient();
+
+    const { error } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("id", userToDelete.id);
 
     if (!error) {
-      setUsers(users.filter((u) => u.id !== userToDelete.id))
+      setUsers(users.filter((u) => u.id !== userToDelete.id));
+    } else {
+      console.error("Delete error:", error);
+      alert("Failed to delete user. Please try again.");
     }
-    setIsDeleteModalOpen(false)
-    setUserToDelete(null)
-  }
 
-  const handleSave = async (userData: Partial<Profile>) => {
-    const supabase = createClient()
+    setIsDeleteModalOpen(false);
+    setUserToDelete(null);
+  };
+
+  const handleSave = async (userData) => {
+    const supabase = createClient();
 
     if (selectedUser) {
       // Update existing user
@@ -68,28 +79,37 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
         .update(userData)
         .eq("id", selectedUser.id)
         .select()
-        .single()
+        .single();
 
-      if (!error && data) {
-        setUsers(users.map((u) => (u.id === selectedUser.id ? data : u)))
+      if (error) {
+        console.error("Update error:", error);
+        alert("Failed to update user.");
+        return;
+      }
+
+      if (data) {
+        setUsers(users.map((u) => (u.id === selectedUser.id ? data : u)));
       }
     }
 
-    setIsModalOpen(false)
-    setSelectedUser(null)
-    router.refresh()
-  }
+    setIsModalOpen(false);
+    setSelectedUser(null);
+    router.refresh();
+  };
 
-  const totalUsers = users.length
-  const adminCount = users.filter((u) => u.role === "admin").length
-  const userCount = users.filter((u) => u.role === "user").length
+  // Stats
+  const totalUsers = users.length;
+  const adminCount = users.filter((u) => u.role === "admin").length;
+  const userCount = users.filter((u) => u.role === "user").length;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground mt-1">Manage all users in the system</p>
+          <p className="text-muted-foreground mt-1">
+            Manage all users in the system
+          </p>
         </div>
       </div>
 
@@ -106,6 +126,7 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
             </div>
           </div>
         </div>
+
         <div className="bg-card border rounded-lg p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-amber-500/10 rounded-lg">
@@ -117,6 +138,7 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
             </div>
           </div>
         </div>
+
         <div className="bg-card border rounded-lg p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-emerald-500/10 rounded-lg">
@@ -130,7 +152,7 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -141,6 +163,7 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
             className="pl-10"
           />
         </div>
+
         <Select value={roleFilter} onValueChange={setRoleFilter}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Filter by role" />
@@ -154,14 +177,19 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
       </div>
 
       {/* Users Table */}
-      <UsersTable users={filteredUsers} currentUserId={currentUserId} onEdit={handleEdit} onDelete={handleDelete} />
+      <UsersTable
+        users={filteredUsers}
+        currentUserId={currentUserId}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
-      {/* Edit Modal */}
+      {/* Edit User Modal */}
       <UserModal
         isOpen={isModalOpen}
         onClose={() => {
-          setIsModalOpen(false)
-          setSelectedUser(null)
+          setIsModalOpen(false);
+          setSelectedUser(null);
         }}
         user={selectedUser}
         onSave={handleSave}
@@ -171,12 +199,14 @@ export function AdminDashboard({ users: initialUsers, currentUserId }: AdminDash
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false)
-          setUserToDelete(null)
+          setIsDeleteModalOpen(false);
+          setUserToDelete(null);
         }}
         onConfirm={handleConfirmDelete}
-        userName={userToDelete?.name || userToDelete?.email || "this user"}
+        userName={
+          userToDelete?.name || userToDelete?.email || "this user"
+        }
       />
     </div>
-  )
+  );
 }

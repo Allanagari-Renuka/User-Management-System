@@ -1,210 +1,3 @@
-// "use client"
-
-// import React, { useState } from "react"
-// import { createClient } from "@/lib/supabase/client"
-// import { Button } from "@/components/ui/button"
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle,
-// } from "@/components/ui/card"
-// import { Input } from "@/components/ui/input"
-// import { Label } from "@/components/ui/label"
-// import { Link, useNavigate } from "react-router-dom"
-// import { Eye, EyeOff, Loader2 } from "lucide-react"
-
-// export default function SignUpPage() {
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     email: "",
-//     password: "",
-//     confirmPassword: "",
-//   })
-//   const [showPassword, setShowPassword] = useState(false)
-//   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-//   const [error, setError] = useState("")
-//   const [isLoading, setIsLoading] = useState(false)
-//   const navigate = useNavigate()
-
-//   const handleChange = (e) => {
-//     setFormData({
-//       ...formData,
-//       [e.target.name]: e.target.value,
-//     })
-//   }
-
-//   const validateForm = () => {
-//     if (!formData.name.trim()) return "Name is required"
-//     if (formData.name.length < 2) return "Name must be at least 2 characters"
-//     if (!formData.email.trim()) return "Email is required"
-//     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return "Invalid email address"
-//     if (!formData.password) return "Password is required"
-//     if (formData.password.length < 6) return "Password must be at least 6 characters"
-//     if (formData.password !== formData.confirmPassword) return "Passwords do not match"
-//     return null
-//   }
-
-//   const handleSignUp = async (e) => {
-//     e.preventDefault()
-//     setError("")
-
-//     const validationError = validateForm()
-//     if (validationError) {
-//       setError(validationError)
-//       return
-//     }
-
-//     setIsLoading(true)
-
-//     try {
-//       const supabase = createClient()
-//       const { error } = await supabase.auth.signUp({
-//         email: formData.email,
-//         password: formData.password,
-//         options: {
-//           emailRedirectTo: `${
-//             window.location.origin
-//           }/auth/callback`, // adjust if needed
-//           data: {
-//             name: formData.name,
-//             role: "user",
-//           },
-//         },
-//       })
-
-//       if (error) throw error
-
-//       // Success! Show success page or message
-//       navigate("/auth/sign-up-success") // create this page or show toast
-//     } catch (err) {
-//       setError(err.message || "Something went wrong. Please try again.")
-//     } finally {
-//       setIsLoading(false)
-//     }
-//   }
-
-//   return (
-//     <div className="flex w-full w-full items-center justify-center bg-muted/40 p-4">
-//       <div className="w-full max-w-md">
-//         <Card className="border-0 shadow-xl">
-//           <CardHeader className="space-y-1 text-center pb-8">
-//             <CardTitle className="text-3xl font-bold">Create an account</CardTitle>
-//             <CardDescription className="text-base">
-//               Enter your details below to get started
-//             </CardDescription>
-//           </CardHeader>
-
-//           <CardContent>
-//             <form onSubmit={handleSignUp} className="space-y-5">
-//               <div className="space-y-2">
-//                 <Label htmlFor="name">Full Name</Label>
-//                 <Input
-//                   id="name"
-//                   name="name"
-//                   type="text"
-//                   placeholder="John Doe"
-//                   value={formData.name}
-//                   onChange={handleChange}
-//                   disabled={isLoading}
-//                   required
-//                 />
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="email">Email</Label>
-//                 <Input
-//                   id="email"
-//                   name="email"
-//                   type="email"
-//                   placeholder="you@example.com"
-//                   value={formData.email}
-//                   onChange={handleChange}
-//                   disabled={isLoading}
-//                   required
-//                 />
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="password">Password</Label>
-//                 <div className="relative">
-//                   <Input
-//                     id="password"
-//                     name="password"
-//                     type={showPassword ? "text" : "password"}
-//                     placeholder="Create a strong password"
-//                     value={formData.password}
-//                     onChange={handleChange}
-//                     disabled={isLoading}
-//                     className="pr-10"
-//                     required
-//                   />
-//                   <button
-//                     type="button"
-//                     onClick={() => setShowPassword(!showPassword)}
-//                     className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
-//                   >
-//                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-//                   </button>
-//                 </div>
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-//                 <div className="relative">
-//                   <Input
-//                     id="confirmPassword"
-//                     name="confirmPassword"
-//                     type={showConfirmPassword ? "text" : "password"}
-//                     placeholder="Repeat your password"
-//                     value={formData.confirmPassword}
-//                     onChange={handleChange}
-//                     disabled={isLoading}
-//                     className="pr-10"
-//                     required
-//                   />
-//                   <button
-//                     type="button"
-//                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-//                     className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
-//                   >
-//                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-//                   </button>
-//                 </div>
-//               </div>
-
-//               {error && (
-//                 <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md text-center">
-//                   {error}
-//                 </div>
-//               )}
-
-//               <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-//                 {isLoading ? (
-//                   <>
-//                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-//                     Creating account...
-//                   </>
-//                 ) : (
-//                   "Create Account"
-//                 )}
-//               </Button>
-//             </form>
-
-//             <p className="mt-6 text-center text-sm text-muted-foreground">
-//               Already have an account?{" "}
-//               <Link to="/auth/login" className="font-medium text-primary hover:underline">
-//                 Sign in
-//               </Link>
-//             </p>
-//           </CardContent>
-//         </Card>
-//       </div>
-//     </div>
-//   )
-// }
-
 import React, { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -253,38 +46,17 @@ export default function SignUpPage() {
         password: formData.password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: { name: formData.name },
-        },
-      })
-      if (error) throw error
-
-      // Create profile record in profiles table
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            full_name: formData.name,
-            bio: formData.bio || "Welcome to my profile!",
+          data: {
+            name: formData.name,
             phone: formData.phone,
             city: formData.city,
             state: formData.state,
             country: formData.country,
-            role: "User",
-            level: "Beginner",
-            projects_count: 0,
-            streak: 0,
-          })
-
-        if (profileError) {
-          console.error("Profile creation error:", profileError)
-          // Don't allow signup to complete if profile creation fails
-          setError(`Failed to create profile: ${profileError.message}. Please try again.`)
-          // Delete the created user if profile creation failed
-          await supabase.auth.admin.deleteUser(data.user.id)
-          return
-        }
-      }
+            bio: formData.bio || "Welcome to my profile!",
+          },
+        },
+      })
+      if (error) throw error
 
       navigate("/auth/sign-up-success")
     } catch (err) {
@@ -354,7 +126,7 @@ export default function SignUpPage() {
                       className="bg-white/10 border-white/20 h-14 rounded-2xl pr-12 text-lg"
                       disabled={isLoading}
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-11 text-gray-400 hover:text-white">
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-5 text-gray-400 hover:text-white">
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
@@ -372,7 +144,7 @@ export default function SignUpPage() {
                       className="bg-white/10 border-white/20 h-14 rounded-2xl pr-12 text-lg"
                       disabled={isLoading}
                     />
-                    <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-4 top-11 text-gray-400 hover:text-white">
+                    <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-4 top-5 text-gray-400 hover:text-white">
                       {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>

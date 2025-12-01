@@ -1,6 +1,5 @@
 "use client"
 
-import type { Profile } from "@/types/database"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -8,15 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 
-type UsersTableProps = {
-  users: Profile[]
-  currentUserId: string
-  onEdit: (user: Profile) => void
-  onDelete: (user: Profile) => void
-}
-
-export function UsersTable({ users, currentUserId, onEdit, onDelete }: UsersTableProps) {
-  const getInitials = (name: string | null) => {
+export function UsersTable({ users, currentUserId, onEdit, onDelete }) {
+  const getInitials = (name) => {
     if (!name) return "?"
     return name
       .split(" ")
@@ -26,7 +18,7 @@ export function UsersTable({ users, currentUserId, onEdit, onDelete }: UsersTabl
       .slice(0, 2)
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -74,13 +66,19 @@ export function UsersTable({ users, currentUserId, onEdit, onDelete }: UsersTabl
                 <p className="text-sm">{user.phone || "-"}</p>
               </TableCell>
               <TableCell>
-                <p className="text-sm">{[user.city, user.state, user.country].filter(Boolean).join(", ") || "-"}</p>
+                <p className="text-sm">
+                  {[user.city, user.state, user.country].filter(Boolean).join(", ") || "-"}
+                </p>
               </TableCell>
               <TableCell>
-                <Badge variant={user.role === "admin" ? "default" : "secondary"}>{user.role}</Badge>
+                <Badge variant={user.role === "admin" ? "default" : "secondary"}>
+                  {user.role}
+                </Badge>
               </TableCell>
               <TableCell>
-                <p className="text-sm text-muted-foreground">{formatDate(user.created_at)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(user.created_at)}
+                </p>
               </TableCell>
               <TableCell>
                 <DropdownMenu>

@@ -30,15 +30,14 @@ export default function EditProfilePage() {
     let isMounted = true
 
     const loadData = async () => {
-      console.log('🔄 Starting loadData...')
+      console.log('Starting loadData...')
       try {
-        console.log('🔍 Getting current session...')
-        // Get current session
+        console.log('Getting current session...')
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
-        console.log('📊 Session result:', { hasSession: !!sessionData?.session, hasUser: !!sessionData?.session?.user, error: sessionError })
+        console.log('Session result:', { hasSession: !!sessionData?.session, hasUser: !!sessionData?.session?.user, error: sessionError })
 
         if (sessionError) {
-          console.error('❌ Session error:', sessionError)
+          console.error('Session error:', sessionError)
           if (isMounted) {
             navigate("/auth/login")
             setLoading(false)
@@ -47,7 +46,7 @@ export default function EditProfilePage() {
         }
 
         if (!sessionData?.session?.user) {
-          console.log('⚠️ No authenticated user found')
+          console.log('No authenticated user found')
           if (isMounted) {
             navigate("/auth/login")
             setLoading(false)
@@ -56,10 +55,9 @@ export default function EditProfilePage() {
         }
 
         const authUser = sessionData.session.user
-        console.log('✅ User authenticated:', authUser.id, authUser.email)
+        console.log('User authenticated:', authUser.id, authUser.email)
 
-        // Create a basic profile from user data (similar to dashboard approach)
-        console.log('🔄 Creating basic profile from auth data...')
+        console.log('Creating basic profile from auth data...')
         const basicProfile = {
           id: authUser.id,
           name: authUser.user_metadata?.name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
@@ -77,7 +75,7 @@ export default function EditProfilePage() {
           country: ""
         }
 
-        console.log('🔄 Setting user data...')
+        console.log('Setting user data...')
         if (isMounted) {
           setUser(authUser)
           setFormData({
@@ -89,11 +87,11 @@ export default function EditProfilePage() {
             state: basicProfile.state,
             country: basicProfile.country
           })
-          console.log('✅ Setting loading to false')
+          console.log('Setting loading to false')
           setLoading(false)
         }
       } catch (err) {
-        console.error('💥 Unexpected error in loadData:', err)
+        console.error('Unexpected error in loadData:', err)
         if (isMounted) {
           navigate("/auth/login")
           setLoading(false)
@@ -116,8 +114,6 @@ export default function EditProfilePage() {
   const handleSave = async (e) => {
     e.preventDefault()
     setSaving(true)
-
-    // Update auth user metadata
     const { error: authError } = await supabase.auth.updateUser({
       data: { name: formData.name }
     })

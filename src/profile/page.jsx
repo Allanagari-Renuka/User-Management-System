@@ -20,7 +20,7 @@ export default function ProfilePage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!contextLoading && !authUser) {
-      console.log('⚠️ No authenticated user - redirecting to login')
+      console.log('No authenticated user - redirecting to login')
       navigate("/auth/login")
     }
   }, [authUser, contextLoading, navigate])
@@ -36,7 +36,7 @@ export default function ProfilePage() {
     projects: userProfile?.projects_count || userProfile?.projects || 0,
     streak: userProfile?.streak || 0,
     level: userProfile?.level || "Beginner",
-    bio: userProfile?.bio || "Welcome to my profile!",
+    bio: userProfile?.bio || "",
     phone: userProfile?.phone || "",
     city: userProfile?.city || "",
     state: userProfile?.state || "",
@@ -49,13 +49,11 @@ export default function ProfilePage() {
     const file = event.target.files[0]
     if (!file) return
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file')
       return
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('File size must be less than 5MB')
       return
@@ -77,7 +75,7 @@ export default function ProfilePage() {
         throw uploadError
       }
 
-      // Get public URL
+      //public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath)
