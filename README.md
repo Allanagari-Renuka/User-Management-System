@@ -73,7 +73,7 @@ This project follows industry-standard development practices including **JWT-bas
 * GitHub for version control
 * Render for deployment
 
-**Live Demo**
+**Live Demo**:
 https://user-management-system-3-72hk.onrender.com
 
 **API Documentation**
@@ -106,7 +106,7 @@ This project is deployed on Render.
 npm install && npm run build
 
 **Start Command**
-npm run preview -- --host 0.0.0.0 --port $PORT
+npm run dev
 
 **Future Enhancements**
 * Two-Factor Authentication (2FA)
@@ -114,4 +114,5 @@ npm run preview -- --host 0.0.0.0 --port $PORT
 * Export user data to CSV/PDF
 * Real-time notifications (WebSockets)
 * Admin analytics dashboard
+
 
