@@ -11,11 +11,11 @@ export default defineConfig({
   },
   preview: {
     host: true,
-    port: 4173,
-    allowedHosts: ['user-management-system-1-u4dj.onrender.com']
+    allowedHosts: [
+      '.onrender.com' 
+    ]
   },
   server: {
     host: true,
-    port: 5173
   }
 })
